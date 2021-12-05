@@ -43,7 +43,7 @@ while not ans == "2":
                         not_in_correct_form = True
 
                     elif number == "":
-                            print(f"{number} can not be empty!")
+                            print(f"Input can not be empty!")
 
                             not_in_correct_form = True
 
