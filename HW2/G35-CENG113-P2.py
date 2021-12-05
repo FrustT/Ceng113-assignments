@@ -1,6 +1,6 @@
 ##########################################################################################
 #      Group-35                                                                          #
-#        290201099 - Burak ERİNÇ                                                         #    
+#        290201099 - Burak ERİNÇ                                                         #
 #        290201082 - Arif Ege ÖNDER                                                      #
 #                                                                                        #
 ##########################################################################################
@@ -12,7 +12,7 @@ ans = "0"
 # this statement ensures that program keeps
 # running till user enters "2" to exit
 while not ans == "2":
-    print("Welcome to FullAdder!\n(1) Compute and Display the Outputs\n(2) Exit") 
+    print("Welcome to FullAdder!\n(1) Compute and Display the Outputs\n(2) Exit")
     ans = input("You choose: ")
 
     #This line sets flags to default value for healthy loops
@@ -29,7 +29,7 @@ while not ans == "2":
                 # this statement ensures that after calculation executed,
                 # user isn't asked to enter a number
                 while not computed:
-                    number = input("Please enter input: ")
+                    number = input("Please enter input: ").strip()
 
                     # with this flag, we will check if the value
                     # entered is worthy enough to compute
@@ -37,10 +37,15 @@ while not ans == "2":
 
                     # since the biggest value we can compute is binary 111
                     # this code checks if the number is in acceptable range
-                    if len(number) > 3: 
+                    if len(number) > 3:
                         print("Please enter a value with max 3 digits!")
 
                         not_in_correct_form = True
+
+                    elif number == "":
+                            print(f"{number} can not be empty!")
+
+                            not_in_correct_form = True
 
                     for digit in number:
                         # This loop takes every digit in string and checks
@@ -55,7 +60,7 @@ while not ans == "2":
                             # since it's not necessary to look after
                             break
 
-                                    
+
                     # checking if it's not in correct form
                     # if not, then no need to compute
                     if not not_in_correct_form:
@@ -79,7 +84,7 @@ while not ans == "2":
                 # this statement ensures that after calculation executed,
                 # user isn't asked to enter a number
                 while not computed:
-                    number = input("Please enter input: ")
+                    number =input("Please enter input: ").strip()
 
                     # with this flag, we will check if the value
                     # entered is worthy enough to compute
@@ -87,9 +92,9 @@ while not ans == "2":
 
                     for digit in number:
                         # This loop takes every digit in string and checks if
-                        #this digit is in string below
+                        # this digit is in string below
                         # if not, then it is not in base 8
-                        if not (digit in "01234567"): 
+                        if not (digit in "01234567"):
                             print("Your input is not in base 8!")
 
                             not_in_correct_form = True
@@ -99,13 +104,25 @@ while not ans == "2":
                             break
 
                     if not not_in_correct_form:
+
+                        # this code makes sure that valid inputs like "0000001"
+                        # doesn't get discarded by our next steps
+                        # but also does not discard "000000"
+                        if len(number) > 1:
+                           number = number[:len(number)-1].lstrip("0") + number[len(number)-1]
+
+                        if number == "":
+                            print(f"Input can not be empty!")
+
+                            not_in_correct_form = True
+
                         # since the biggest value we can compute is binary 111
                         # this code checks if the number is in acceptable range
-                        if (len(number) > 1 or int(number) > 7):
+                        elif len(number) > 1 or int(number) > 7:
                             print(f"Octal {number} cannot be represented with 3 bits!")
 
                             not_in_correct_form = True
-                    
+
                     # checking if it's not in correct form
                     # if not, then no need to compute
                     if not not_in_correct_form:
@@ -131,7 +148,7 @@ while not ans == "2":
 
                     # we are using upper here because in base 16,
                     # value entered could be an hexadecimal letter
-                    number = input("Please enter input: ").upper()
+                    number = input("Please enter input: ").strip().upper()
 
                     # with this flag, we will check if the value
                     # entered is worthy enough to compute
@@ -141,7 +158,7 @@ while not ans == "2":
                         # This loop takes every digit in string and checks
                         # if this digit is in string below
                         # if not, then it is not in base 16
-                        if not (digit in "0123456789ABCDEF"): 
+                        if not digit in "0123456789ABCDEF":
                             print("Your input is not in base 16!")
 
                             not_in_correct_form = True
@@ -149,14 +166,28 @@ while not ans == "2":
                             # if any found, break out of the loop
                             # since it's not necessary to look after
                             break
-                            
+
                     if not not_in_correct_form:
+
+                        # this code makes sure that valid inputs like "0000001"
+                        # doesn't get discarded by our next step
+                        # but also does not discard "000000"
+                        if len(number) > 1:
+                            number = number[:len(number)-1].lstrip("0") + number[len(number)-1]
+
+                        if number == "":
+                            print(f"Input can not be empty!")
+
+                            not_in_correct_form = True
+
                         # since the biggest value we can compute is binary 111
                         # this code checks if the number is in acceptable range
-                        if(len(number) > 1 or "0123456789ABCDEF".index(number) > 7):
+                        elif len(number) > 1 or "0123456789ABCDEF".index(number) > 7:
                             print(f"Hexadecimal {number} can not be represented with 3 bits!")
 
                             not_in_correct_form = True
+
+
 
                     # checking if it's not in correct form
                     # if not, then no need to compute
@@ -165,7 +196,7 @@ while not ans == "2":
                         # converting into integer since
                         # we haven't done it at the beginning
                         number = int(number)
-                            
+
                         # defining our A, B and C values for base 16
                         C = number % 2
                         B = (number % 4 - C )// 2
@@ -180,7 +211,7 @@ while not ans == "2":
                 print("Invalid input, please enter again.")
 
             # this statement ensures that
-            # computation doesn't executed unnecessarily 
+            # computation doesn't executed unnecessarily
             if computed:
                 carry_out = 0
 
@@ -190,17 +221,16 @@ while not ans == "2":
                 # perform an operation to determine
                 # carry out and sum values
                 carry_out = total // 2
-                total = total - carry_out * 2 
+                total = total - carry_out * 2
 
                 # print the result!
                 print(f"Sum: {total}\nC_out: {carry_out}")
-                
+
 
     elif ans == "2":
         print("Byee :(")
 
     # since previous statements covers all the options,
-    # if they are all 'false', then that means input is invalid.  
+    # if they are all 'false' then that means input is invalid.
     else :
         print("Invalid input, please enter again.")
-        
