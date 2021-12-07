@@ -141,7 +141,7 @@ while not ans == "2":
                         # This loop takes every digit in string and checks
                         # if this digit is in string below
                         # if not, then it is not in base 16
-                        if not (digit in "0123456789ABCDEF"): 
+                        if not digit in "0123456789ABCDEF": 
                             print("Your input is not in base 16!")
 
                             not_in_correct_form = True
@@ -153,7 +153,7 @@ while not ans == "2":
                     if not not_in_correct_form:
                         # since the biggest value we can compute is binary 111
                         # this code checks if the number is in acceptable range
-                        if(len(number) > 1 or "0123456789ABCDEF".index(number) > 7):
+                        if len(number) > 1 or "0123456789ABCDEF".index(number) > 7 or number == "":
                             print(f"Hexadecimal {number} can not be represented with 3 bits!")
 
                             not_in_correct_form = True
