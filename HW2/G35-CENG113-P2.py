@@ -62,7 +62,7 @@ while not ans == "2":
 
 
                     # checking if it's not in correct form
-                    # if not, then no need to compute
+                    # if not, then no need to compute
                     if not not_in_correct_form:
 
                         # since our code needs 3 digit to execute,
@@ -124,7 +124,7 @@ while not ans == "2":
                             not_in_correct_form = True
 
                     # checking if it's not in correct form
-                    # if not, then no need to compute
+                    # if not, then no need to compute
                     if not not_in_correct_form:
 
                         # converting into integer since
@@ -146,7 +146,7 @@ while not ans == "2":
                 # user isn't asked to enter a number
                 while not computed:
 
-                    # we are using upper here because in base 16,
+                    # we are using upper here because in base 16,
                     # value entered could be an hexadecimal letter
                     number = input("Please enter input: ").strip().upper()
 
@@ -158,11 +158,7 @@ while not ans == "2":
                         # This loop takes every digit in string and checks
                         # if this digit is in string below
                         # if not, then it is not in base 16
-<<<<<<< HEAD
-                        if not digit in "0123456789ABCDEF": 
-=======
                         if not digit in "0123456789ABCDEF":
->>>>>>> b57f11f77ad48540567d2878fe45d670803f5ec0
                             print("Your input is not in base 16!")
 
                             not_in_correct_form = True
@@ -186,11 +182,7 @@ while not ans == "2":
 
                         # since the biggest value we can compute is binary 111
                         # this code checks if the number is in acceptable range
-<<<<<<< HEAD
-                        if len(number) > 1 or "0123456789ABCDEF".index(number) > 7 or number == "":
-=======
                         elif len(number) > 1 or "0123456789ABCDEF".index(number) > 7:
->>>>>>> b57f11f77ad48540567d2878fe45d670803f5ec0
                             print(f"Hexadecimal {number} can not be represented with 3 bits!")
 
                             not_in_correct_form = True
@@ -198,7 +190,7 @@ while not ans == "2":
 
 
                     # checking if it's not in correct form
-                    # if not, then no need to compute
+                    # if not, then no need to compute
                     if not not_in_correct_form:
 
                         # converting into integer since
