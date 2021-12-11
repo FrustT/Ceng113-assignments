@@ -3,8 +3,8 @@ notAvailableToRoll = []
 notAvailableToRoll[:] = noRollLeftA,noRollLeftB = False, False
 Players = ["A","B"]
 frameSumA,frameSumB,framePointerA,framePointerB,extraRollA,extraRollB= 0,0,0,0,0,0
-frames,frameA,frameB , scoreboard =[],[],[],[]
-frames[:] = frameA[:],frameB[:] =[frameSumA,framePointerA],[frameSumB,framePointerB]
+scoreboard = []
+frames =[frameSumA,framePointerA],[frameSumB,framePointerB]
 ballScores = ["Ball Scores =","Ball Scores ="]
 scoreboard[:] =A,B= [[0 for i in range(10)],ballScores[0],extraRollA,noRollLeftA],[[0 for i in range(10)],ballScores[1],extraRollB,noRollLeftB]
 #One table would be more efficent but this is just a sketch for now
@@ -71,6 +71,7 @@ def roll(player):
             
                 if firstRoll + secondRoll ==10:#spare
                     print("Spare")
+                    write_scoreboard(player)
                     player[2] += 1
                 
                 else:#open frame
@@ -82,6 +83,7 @@ def roll(player):
                 
             else:#Strike
                 print(f"Strike")
+                write_scoreboard(player)
                 player[2] += 2
 
 
