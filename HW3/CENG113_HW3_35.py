@@ -1,138 +1,93 @@
-#########################################
-#      Group-35                         #
-#        290201099 - Burak ERİNÇ        #
-#        290201082 - Arif Ege ÖNDER     #
-#                                       #
-#########################################
-
 import random
 
-# defining the global variables
-PLAYERS = ["A", "B"]
+scoreboard = [[0 for i in range(10)], [0 for i in range(10)]]
+ballScores = [[], []]
+gameOver = [False, False]
+extraRolls = [0, 0]
+frameSums= [0,0]
+framePointers = [0,0]
+playersName = ['A','B']
 
-scores = [[], []]
-ball_scores = [[], []]
-extra_rounds = [0, 0]
 
-# defining the main function that
-# the game will run in
+def print_scoreboard(player):
+    global scoreboard
+
+    print("Ball scores: ",*ballScores[player])
+
+    print("Total Scores:", end=" ")
+    print(*scoreboard[player],sep = '|')
+
+
+def calculate_frame(player):
+    scoreboard[player] [framePointers[player]] += frameSums[player]
+
+    if framePointers[player] != 9: framePointers[player] += 1
+    
+    else : gameOver[player] = True
+
+def extra_roll(player): #roll için daha iyi bir isim lazım
+    roll= 0
+
+    for a in range(extraRolls[player]):
+        roll= random.randrange(0,10-roll)
+
+        rolled(player,roll)
+
+    calculate_frame(player)
+    extraRolls[player] = 0
+
+
+def rolled(player,pins):
+    print(f"Pins:{pins}")
+    ballScores[player].append(pins)
+    frameSums[player] += pins
+
+
+def Roll(player): #THIS IS NO EXTRA ROLL SEQUENCE
+     print(f"Player {playersName[player]} rolls...")
+
+     firstRoll= random.randrange(0,10)
+     rolled(player,firstRoll)
+
+     if firstRoll != 10:
+          secondRoll= random.randrange(0,10-firstRoll)
+          rolled(player,secondRoll)
+
+          if firstRoll + secondRoll == 10 : #SPARE
+               print("Spare")
+               extraRolls[player] = 1
+
+          else :#OPEN FRAME
+               calculate_frame(player)
+
+     else :#STRİKE
+          print(f"Strike!!!")
+        
+          extraRolls[player] = 2
+
+          
+     print_scoreboard(player)
+
+
 def main():
-	# using the global variables
-	global scores
 
-	# pick a random player to start the game
-	turn = random.randint(0, 1)
+    turn = random.randint(0,1)
 
-	# roll with the round number and the turn
-	while True:
-		roll(turn)
+    while not all(gameOver):#this loop keeps repeating till both player's game is over
 
-		if len(scores[turn]) == 10 or not len(scores[turn]) == 10 and not len(scores[not turn]) == 10:
-			# if a player is finished or
-			# if players are both not finished
-			# then switch turns
-			turn = not turn
-		
-		if len(scores[turn]) == 10 and len(scores[not turn]) == 10:
-			# if both players are finished,
-			# finish the game
-			break
+        if extraRolls[turn] != 0:extra_roll(turn)
+        else :Roll(turn)
 
-		# otherwise, don't switch and let the other player finish
+        if not gameOver[turn -1] : turn = (turn+1) % 2
+    else:
+        print(f"Game Over\n__________")
+        
+        for playersScores in scoreboard:
+            print(f"Player {playersName[scoreboard.index(playersScores)]} got {playersScores[-1]} points")
 
-	# finish the game and check the scores
-	# to determine the winner
-	if sum(scores[0]) > sum(scores[1]):
-		print("Winner is player A.")
-	elif sum(scores[0]) < sum(scores[1]):
-		print("Winner is player B.")
-	else:
-		print("Everyone is a winner! Tie game.")
-		
+        winner = 1 if scoreboard[0][-1]> scoreboard[1][-1] else 0
+        print(f"{playersName[winner]} Have WON!!!")
+    
 
-# defining the roll function for every roll
-# so we avoid code duplication
-def roll(player):
-	# using the global variables
-	global PLAYERS
-	global ball_scores
-	global scores
-
-	print("Player", PLAYERS[player], "rolls...")
-
-	# take the pin input from player
-	# and check if inputs are valid
-	while True:
-		pins_1 = int(input("Pins: "))
-		pins_2 = int(input("Pins: "))
-
-		if 0 <= pins_1 <= 10 and 0 <= pins_2 <= 10 and pins_1 + pins_2 <= 10:
-			break
-
-		print("An invalid input.")
-
-	# if it's a strike, only add the first pin to ball_scores
-	# else, add both pin scores
-	if is_strike(pins_1): ball_scores[player].append(pins_1)
-	else: ball_scores[player].extend([pins_1, pins_2])
-
-	# print out the ball scores in one line
-	print("Ball Scores:", *ball_scores[player])
-
-	# set the new scores with custom function
-	add_to_scores(player, pins_1, pins_2)
-
-	# print the total scores
-	print("Total scores:", end=" ")
-	for score in scores[player]:
-		print(score, end=" | ")
-	print()
-
-def add_to_scores(player, pins_1, pins_2):
-	# using the global variables
-	global scores
-	global ball_scores
-
-	# get the sum of scores so we can add onto it
-	sum_of_scores = sum(scores[player])
-
-	if is_strike(pins_1):
-		if extra_rounds[player] == 0:
-			extra_rounds[player] = 2
-			return
-		else:
-			sum_of_scores = count_total_sum(player, sum_of_scores)
-
-	elif is_spare(pins_1, pins_2):
-		if extra_rounds[player] == 0:
-			extra_rounds[player] = 1
-			return
-		else:
-			sum_of_scores = count_total_sum(player, sum_of_scores)
-
-	else:
-		if extra_rounds[player] == 0:
-			sum_of_scores += pins_1 + pins_2
-		else:
-			sum_of_scores = count_total_sum(player, sum_of_scores)
-
-	scores[player].append(sum_of_scores)
-
-def count_total_sum(player, sum_of_scores):
-	for i in range(len(ball_scores[player]) - (extra_rounds[player] + 2), len(ball_scores[player]) + 1):
-		if i >= 0:
-			sum_of_scores += ball_scores[player][i - 1]
-
-	return sum_of_scores
-
-# checking if given pins are strike
-def is_strike(pins_1):
-	if pins_1 == 10: return True
-	return False
-
-# checking if given pins are spare
-def is_spare(pins_1, pins_2):
-	if pins_1 + pins_2 == 10: return True
-	return False
 
 main()
