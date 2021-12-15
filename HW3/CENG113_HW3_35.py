@@ -1,5 +1,4 @@
 import random
-
 scoreboard = [[0 for i in range(10)], [0 for i in range(10)]]
 ballScores = [[], []]
 gameOver = [False, False]
@@ -11,13 +10,18 @@ playersName = ['A', 'B']
 pinsUp = 10
 
 def enter_pins(player):
+    global pinsUp
     pins = 0
- ###INVALID INPUT'A BAK
-    while pins <= pinsUp:
-        pins = int(input(f'Please enter pins(0-{pinsUp}):'))
-        pinsUp -= pins
-        
-    return pins
+
+    while True:
+        pins = input(f'Please enter pins(0-{pinsUp}):').strip()
+        if not pins.isnumeric() or int(pins) > pinsUp or len(pins) == 0:
+            print(f"Invalid Input")
+        else:
+            pins = int(pins)
+            pinsUp -= pins
+            rolled(player,pins)
+            return pins
 
 def print_scoreboard(player):
     print("Ball scores: ",*ballScores[player])
@@ -32,54 +36,53 @@ def calculate_frame(player):
     else: gameOver[player] = True
 
 def extra_roll(player):
-    pins = 0
-
     for i in range(extraRolls[player]):
-        pins = int(input())#ENTER PINSI ÇAĞIR
-
-        rolled(player, roll)
-
-    calculate_frame(player)
+        enter_pins(player)    
     extraRolls[player] = 0
 
 def rolled(player,pins):
+    print(f"Pins:{pins}")
     ballScores[player].append(pins)
     frameSums[player] += pins
 
 def roll(player):
-    print(f"Player {playersName[player]} rolls...")
-
     firstRoll = enter_pins(player)
-    rolled(player, firstRoll)
-
+    
     if firstRoll != 10:
-        secondRoll = int(input("Pins: "))
-
-        rolled(player,secondRoll)
+        secondRoll = enter_pins(player)        
 
         if firstRoll + secondRoll == 10 :
-            extraRolls[player] = 1
             
-            if framePointers[player] == 9: extra_roll(player)  
-
-        else:
-            calculate_frame(player)
+            if framePointers[player] == 9:LastFrame_ExtraRoll(player) 
+            else : extraRolls[player] = 1
 
     else:
-        extraRolls[player] = 2
         
-        if framePointers[player] == 9: 
-            extraRolls[player] = 1
-            extra_roll(player)
+        if framePointers[player] == 9:LastFrame_ExtraRoll(player)
+        else : extraRolls[player] = 2
 
-    print_scoreboard(player)
+
+def LastFrame_ExtraRoll(player):
+    global pinsUp
+    while True:
+        pinsUp = 10
+        pins = enter_pins(player)
+        if pins < 10 :
+            break
 
 def main():
+    global pinsUp#bu global pinsup'ı doğru yere koyarsak bu line'ı sadece bir kere yazabiliriz gibi geliyo bana, kavrayamadım bu saatte
     turn = random.randint(0, 1)
 
     while not all(gameOver):
-        if extraRolls[turn] != 0: extra_roll(turn)
+
+        print(f"Player {playersName[turn]} rolls...")
+        pinsUp = 10
+        if extraRolls[turn]: extra_roll(turn)
         else: roll(turn)
+
+        if not extraRolls[turn]: calculate_frame(turn)
+        print_scoreboard(turn)
 
         if not gameOver[not turn]: turn = not turn
     else:
@@ -88,7 +91,7 @@ def main():
         for playersScores in scoreboard:
             print(f"Player {playersName[scoreboard.index(playersScores)]} got {playersScores[-1]} points")
 
-        winner = 1 if scoreboard[0][-1] > scoreboard[1][-1] else 0
+        winner = 0 if scoreboard[0][-1] > scoreboard[1][-1] else 1
         print(f"{playersName[winner]} Have WON!!!")
 
 main()
