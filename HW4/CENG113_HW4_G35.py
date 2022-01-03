@@ -104,7 +104,7 @@ def get_sentences(dissimilar_frag_dict):
     sentences_dict = {}
 
     def generate_kmers(seq, k):
-        kmers= ""
+        kmers= ""afewfaw
 
         # this code takes a string and splits it into k length strings and 
         # add them in order to another string
