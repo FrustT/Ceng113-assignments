@@ -5,8 +5,9 @@
 #                                         #
 ###########################################
 
+# importing csv library to write into a csv file
 import csv
-from os import remove
+
 removed = 0
 
 def read_genes(file_path):
