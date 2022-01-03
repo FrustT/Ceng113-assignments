@@ -5,6 +5,10 @@
 #                                                                                         #
 ###########################################
 
+import csv
+
+removed = 0
+
 def read_genes(file_path):
     # store all headers and sequences to
     # add them later to the dictionary
@@ -36,7 +40,7 @@ def get_fragments(gene_dict, frag_len=50):
         lengths = key.split("|")[1].split("-")
 
         # find the length with substracting both key values
-        key_length = int(lengths[1]) - int(lengths[0]) + 1
+        key_length = int(lengths[1]) - int(lengths[0])
 
         # only execute if frag_len is bigger than the length
         # to filter the shorter ones
@@ -62,21 +66,22 @@ def get_fragments(gene_dict, frag_len=50):
 
     return new_dict
 
-def get_similarity(s1, s2):
-    similar = 0
-
-    # get similarity with checking every character's
-    # position and value. if same, increment similar
-    for i in range(len(s1)):
-        if s1[i] == s2[i]: similar += 1
-
-    # lastly, divide similar to length of a sequence
-    # to find the percent with format 0.x
-    return similar / len(s1)
-
 def filter_frags(frag_dict, threshold=0.7):
     dissimilar_frag_dict = {}
     added = []
+
+    def get_similarity(s1, s2):
+        similar = 0
+
+        # get similarity with checking every character's
+        # position and value. if same, increment similar
+        for i in range(len(s1)):
+            if s1[i] == s2[i]: similar += 1
+
+        # lastly, divide similar to length of a sequence
+        # to find the percent with format 0.x
+        return similar / len(s1)
+    
     # check for every key with every present
     # in the dictionary with time complexity of O(n^2)
     for key in frag_dict:
@@ -86,12 +91,12 @@ def filter_frags(frag_dict, threshold=0.7):
         for looped_key in frag_dict:
             s2 = frag_dict[looped_key]
 
-            if key != looped_key and get_similarity(s1, s2) >= threshold:
-                # to avoid duplication, check if key already exists in the list
+            if not dissimilar and key != looped_key and get_similarity(s1, s2) >= threshold:
+                # to avoid duplication, check if key already exists in the list
                 if looped_key not in added: added.append(key)
                 dissimilar = False
 
-        # finally if similarity not found, add to dissimilar dictionary
+        # finally if similarity not found, add to dissimilar dictionary
         if dissimilar: dissimilar_frag_dict[key] = frag_dict[key]
 
     # avoid duplication and add the values added before
@@ -104,21 +109,24 @@ def get_sentences(dissimilar_frag_dict):
     sentences_dict = {}
 
     def generate_kmers(seq, k):
-        kmers= ""afewfaw
-
+        kmers = ""
+        
         # this code takes a string and splits it into k length strings and 
         # add them in order to another string
-        for i in range(0,len(seq)- k + 1):
+        for i in range(0, len(seq) - k + 1):
             kmers += " " + seq[i:i+k]
         return kmers
         
     # this block takes all keys and values and
     # assings kmers to its key value in another dict
     for key in dissimilar_frag_dict:
-        sentences_dict[key] = generate_kmers(dissimilar_frag_dict[key],4).lstrip()
+        sentences_dict[key] = generate_kmers(dissimilar_frag_dict[key], 4).lstrip()
+
     return sentences_dict
 
 def clean_dict(sentences_dict):
+    global removed
+
     cleaned_dict = {}
 
     def clean_sentence(sentence):
@@ -126,29 +134,70 @@ def clean_dict(sentences_dict):
         for word in sentence.split():
             if word not in cleaned_sentence_list:
                 cleaned_sentence_list.append(word)
+
         return " ".join(cleaned_sentence_list)
+
     for key in sentences_dict:
-        cleaned_dict[key] = clean_sentence(sentences_dict[key])
+        cleaned = clean_sentence(sentences_dict[key])
+        cleaned_dict[key] = cleaned
+        removed += len(sentences_dict[key].split(" ")) - len(cleaned.split(" "))
+
     return cleaned_dict
 
-def get_wordNumber(dict):
-    wordNumber = 0
-
-    # this block gets total word number in  a dict
-    for key in dict:
-        # +1 is for first word that has no blank spaces before it
-        wordNumber +=(len(dict[key])+1)/ 5
-    return wordNumber
-
 def write_genes(file_path, clean_sentences_dict):
-    # STEP 6
-    pass
+    headers = ["fragment_id", "sentence", "sentence_length", "number_of_words"]
+
+    # open the csv file, if doesn't exist create
+    with open(file_path, "w") as f:
+        writer = csv.writer(f)
+
+        # write headers
+        writer.writerow(headers)
+
+        # written_data = 
+        # [
+        #   {
+        #       "fragment_id": "chrX|123123-123123",
+        #       "sentece": "AGAG GAGT AGTC GTCA",
+        #       "sentence_length": 19,
+        #       "number_of_words": 4
+        #   },
+        #   {
+        #       "fragment_id": "chrX|123123-123123",
+        #       "sentece": "AGAG GAGT AGTC GTCA",
+        #       "sentence_length": 19,
+        #       "number_of_words": 4
+        #   }
+        # ]
+
+        # shape of written data will be like above
+        written_data = []
+
+
+        # create a dictionary for every element
+        for element in clean_sentences_dict:
+            data = {}
+
+            data["fragment_id"] = element
+            data["sentence"] = clean_sentences_dict[element]
+            data["sentence_length"] = len(data["sentence"])
+            data["number_of_words"] = len(clean_sentences_dict[element].split(" "))
+            
+            # append it to written_data
+            written_data.append(data)
+
+        # finally, write all datas to the csv file
+        for data in written_data:
+            writer.writerow([data["fragment_id"], data["sentence"], data["sentence_length"], data["number_of_words"]])
+    
+        f.close()
+        
 
 def main():
     # STEP 7: Runs required steps and prints data statistics
 
         # 1) read genes from input.txt
-        gene_dict = read_genes("input.txt")
+        gene_dict = read_genes(r"C:\Users\burak\Desktop\Ceng-113-homework-2\HW4\input.txt")
         #    print the number of genes -> Expected output: 115
         print(f"Number of genes: {len(gene_dict)}")
         # 2) get fragments for genes read
@@ -160,13 +209,14 @@ def main():
         #    print the number of dissimilar fragments -> Expected output: 1286
         print(f"Number of dissimilar fragments: {len(dissimilar_frag_dict)}")
         # 4) get sentences for dissimilar fragments
-        #    print the number of words in a sentence -> Expected output: 46
+        #    print the number of words in a sentence -> Expected output: 47
         sentences_dict = get_sentences(dissimilar_frag_dict)
         # 5) remove duplicate words in sentences
         cleaned_dict = clean_dict(sentences_dict)
-        #    print the total number of words removed -> Expected output: 8194
-        get_wordNumber(sentences_dict) - get_wordNumber(cleaned_dict)
+        #    print the total number of words removed -> Expected output: 8521
+        print(f"Number of words removed: {removed}")
         # 6) write sentences into output.csv
+        # write_genes("output.csv", cleaned_dict)
 
     # DO NOT SCAN OR PRINT EXTRA INFORMATION. JUST THE STATS LISTED ABOVE.
 
